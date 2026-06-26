@@ -36,12 +36,14 @@ function ExpenseForm({ onAdd }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-6 mb-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">Add Expense</h2>
+    <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#334155] p-6">
+      <h2 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-4">
+        Add Expense
+      </h2>
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC] mb-1">
             Amount (₦)
           </label>
           <input
@@ -50,18 +52,18 @@ function ExpenseForm({ onAdd }) {
             value={form.amount}
             onChange={handleChange}
             placeholder="Enter amount"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#E2E8F0] dark:border-[#334155] rounded-xl px-4 py-2 text-sm bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC] mb-1">
             Category
           </label>
           <select
             name="category"
             value={form.category}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#E2E8F0] dark:border-[#334155] rounded-xl px-4 py-2 text-sm bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
           >
             <option value="">Select a category</option>
             {CATEGORIES.map((cat) => (
@@ -72,7 +74,7 @@ function ExpenseForm({ onAdd }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC] mb-1">
             Date
           </label>
           <input
@@ -80,11 +82,11 @@ function ExpenseForm({ onAdd }) {
             name="date"
             value={form.date}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#E2E8F0] dark:border-[#334155] rounded-xl px-4 py-2 text-sm bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC] mb-1">
             Description (optional)
           </label>
           <input
@@ -93,12 +95,12 @@ function ExpenseForm({ onAdd }) {
             value={form.description}
             onChange={handleChange}
             placeholder="Short note e.g. Lunch with client"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#E2E8F0] dark:border-[#334155] rounded-xl px-4 py-2 text-sm bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
           />
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+          className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white py-2 rounded-xl text-sm font-semibold transition"
         >
           Add Expense
         </button>
