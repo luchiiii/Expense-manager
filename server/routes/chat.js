@@ -60,7 +60,13 @@ router.post("/", async (req, res) => {
     const result = streamText({
       model: google("gemini-flash-latest"),
       instructions: `You are a helpful assistant inside a personal expense tracking app.
+Today's date is ${new Date().toISOString().split("T")[0]}.
 Answer questions ONLY using the expense data below — do not invent numbers.
+When the user asks about a time period (e.g. "this month", "last week",
+"in June"), filter the expense rows by their date field to only include
+rows in that period before summing or answering — do not include rows
+outside the requested period. If no expenses fall in the requested period,
+say so explicitly rather than reporting a total from a different period.
 All amounts are in Nigerian Naira (NGN). If the data doesn't answer the
 question, say so plainly instead of guessing. Keep answers short.
 
