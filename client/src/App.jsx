@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseList from "./components/ExpenseList";
 import Summary from "./components/Summary";
+import ExpenseChat from "./components/ExpenseChat";
 import {
   getExpenses,
   createExpense,
@@ -90,6 +91,11 @@ function App() {
           <div className="md:col-span-3">
             <ExpenseList expenses={expenses} onDelete={handleDelete} />
           </div>
+        </div>
+
+        {/* AI Chat */}
+        <div className="mt-6">
+          <ExpenseChat />
         </div>
       </main>
 
