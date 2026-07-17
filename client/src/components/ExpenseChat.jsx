@@ -2,12 +2,16 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/chat`
+  : "/api/chat";
+
 export default function ExpenseChat() {
   const [input, setInput] = useState("");
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
-      api: "/api/chat",
+      api: API_URL,
     }),
   });
 
