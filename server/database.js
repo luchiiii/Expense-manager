@@ -1,14 +1,22 @@
-const Database = require("better-sqlite3");
-const db = new Database("expenses.db");
+const { Pool } = require("pg");
 
-db.exec(`
+const pool = new Pool({
+     connectionString: process.env.DATABASE_URL,
+     ssl: {
+         rejectUnauthorized: false,
+     },
+})
+
+pool.query(`
     CREATE TABLE IF NOT EXISTS expenses (
-         id INTEGER PRIMARY KEY AUTOINCREMENT,
+         id SERIAL PRIMARY KEY,
          amount REAL NOT NULL,
          category TEXT NOT NULL,
          date TEXT NOT NULL,
          description TEXT
          )
-    `);
+    `)
+     .then(() => console.log("Expenses table ready"))
+     .catch((err) => console.error("Error creating expenses table:", err));
 
-    module.exports = db;
+    module.exports = pool;

@@ -7,24 +7,25 @@ const {
   pipeUIMessageStreamToResponse,
 } = require("ai");
 const { google } = require("@ai-sdk/google");
-const db = require("../database");
+const pool = require("../database");
 
 // Builds a compact snapshot of the user's expense data to ground the
 // model's answers. Keeps it to recent rows + the same totals your
 // summary endpoint already returns, rather than sending the whole table.
-function buildExpenseContext() {
-  const expenses = db
-    .prepare(
-      "SELECT amount, category, date, description FROM expenses ORDER BY date DESC LIMIT 200",
-    )
-    .all();
+async function buildExpenseContext() {
+  const expensesResult = await pool.query(
+    "SELECT amount, category, date, description FROM expenses ORDER BY date DESC LIMIT 200",
+  );
+  const totalResult = await pool.query(
+    "SELECT SUM(amount) as total FROM expenses",
+  );
+  const breakdownResult = await pool.query(
+    "SELECT category, SUM(amount) as total FROM expenses GROUP BY category",
+  );
 
-  const total = db.prepare("SELECT SUM(amount) as total FROM expenses").get();
-  const breakdown = db
-    .prepare(
-      "SELECT category, SUM(amount) as total FROM expenses GROUP BY category",
-    )
-    .all();
+  const expenses = expensesResult.rows;
+  const total = totalResult.rows[0];
+  const breakdown = breakdownResult.rows;
 
   const expenseLines = expenses
     .map(
@@ -55,7 +56,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const context = buildExpenseContext();
+    const context = await buildExpenseContext();
 
     const result = streamText({
       model: google("gemini-flash-latest"),
