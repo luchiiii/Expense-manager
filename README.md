@@ -1,46 +1,67 @@
 # Expense Manager
 
-A simple full-stack expense tracking application built with Node.js, Express, SQLite, React, and Tailwind CSS.
+A full-stack expense tracking application with an AI-powered chat feature for asking natural-language questions about your spending.
+
+**Live app:** https://expense-manager-three-tau.vercel.app
+**Backend API:** https://expense-manager-n4t2.onrender.com
+
+## Features
+
+- Add, edit, and delete expenses with amount, category, date, and optional description
+- View all expenses, newest first
+- View total amount spent and spending breakdown by category
+- Ask questions about your spending in plain English, e.g. "how much did I spend on food this month?", answered by an AI assistant grounded in your real expense data, with streamed responses
+- Form validation on both frontend and backend
+- Data persists via PostgreSQL (Supabase)
+- Nigerian Naira (₦) currency formatting
+- Responsive, ledger-inspired UI
 
 ## Project Structure
+
+```
 Expense-manager
 ├── client
 │   ├── public
 │   ├── src
+│   │   ├── api/            # Axios calls to the backend
+│   │   ├── components/     # ExpenseForm, ExpenseList, ExpenseItem, Summary, ExpenseChat
+│   │   └── App.jsx
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.js
 │
 ├── server
-│   ├── routes
-│   ├── database.js
+│   ├── routes/
+│   │   ├── expenses.js     # CRUD + summary endpoints
+│   │   └── chat.js         # AI chat endpoint
+│   ├── database.js         # Postgres connection pool (Supabase)
 │   ├── index.js
-│   ├── expenses.db
 │   └── package.json
 │
 └── README.md
-
+```
 
 ## Tech Stack
 
 **Backend**
-- Node.js
-- Express
-- SQLite (via better-sqlite3)
-- dotenv
-- cors
+- Node.js, Express
+- PostgreSQL via [Supabase](https://supabase.com), accessed with `pg`
+- Google Gemini via the [Vercel AI SDK](https://ai-sdk.dev) (`ai`, `@ai-sdk/google`)
+- dotenv, cors
 
 **Frontend**
 - React (via Vite)
 - Tailwind CSS
 - Axios
+- `@ai-sdk/react` (`useChat`) for the AI chat interface
 
 ## Getting Started
 
 ### Prerequisites
-Make sure you have the following installed:
 - Node.js (v18 or higher)
 - npm
+- A free [Supabase](https://supabase.com) project (for the database)
+- A free [Google AI Studio](https://aistudio.google.com/app/apikey) API key (for the chat feature)
 
 ### 1. Clone the Repository
 
@@ -56,8 +77,13 @@ cd server
 npm install
 ```
 
-Create a `.env` file inside the server folder:
+Create a `.env` file inside the `server` folder:
+
+```
 PORT=5000
+DATABASE_URL=your_supabase_pooler_connection_string
+GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
+```
 
 Start the server:
 
@@ -65,7 +91,7 @@ Start the server:
 node index.js
 ```
 
-The server will run on `http://localhost:5000`
+The server runs on `http://localhost:5000` and creates the `expenses` table automatically on first run if it doesn't already exist.
 
 ### 3. Set Up the Frontend
 
@@ -77,7 +103,7 @@ npm install
 npm run dev
 ```
 
-The frontend will run on `http://localhost:5173`
+The frontend runs on `http://localhost:5173`.
 
 ## API Endpoints
 
@@ -89,35 +115,4 @@ The frontend will run on `http://localhost:5173`
 | PUT | /api/expenses/:id | Update an existing expense |
 | DELETE | /api/expenses/:id | Delete an expense |
 | GET | /api/expenses/summary/total | Get total and category breakdown |
-
-## Features
-
-- Add expenses with amount, category, date and optional description
-- View all expenses listed newest first
-- Delete expenses
-- View total amount spent
-- View spending breakdown by category
-- Form validation on both frontend and backend
-- Error handling for invalid requests and missing fields
-- Data persists after server restarts using SQLite
-- Responsive layout — stacks vertically on mobile
-- Nigerian Naira (₦) currency formatting
-
-## What I Skipped and Why
-
-- Edit expense from the UI — I focused on getting the core features clean and working rather than adding extras
-- Filtering by category or date range — not required for core functionality
-- Charts — not required and would have added unnecessary complexity
-
-## AI Usage
-
-I used Claude (Anthropic) as an AI assistant during this project. Specifically:
-- To help structure the Express route handlers and SQLite query syntax for the endpoints
-- To help set up the initial database schema and table creation
-- To help with Tailwind CSS class combinations when i was unsure
-
-All code was reviewed and understood before submission. I am able to explain any part of this codebase.
-
-## Time Spent
-
-Approximately 20 hours total across backend setup, frontend development, styling and documentation.
+| POST | /api/chat | Ask a natural-language question about your expenses (streamed response) |
