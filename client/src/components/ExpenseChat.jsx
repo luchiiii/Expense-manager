@@ -6,6 +6,17 @@ const API_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api/chat`
   : "/api/chat";
 
+// Funtion to help with gemini formatting to render text with bold segments.
+function renderWithBold(text) {
+  const segments = text.split(/(\*\*[^*]+\*\*)/g);
+  return segments.map((segment, i) => {
+    if (segment.startsWith("**") && segment.endsWith("**")) {
+      return <strong key={i}>{segment.slice(2, -2)}</strong>;
+    }
+    return <span key={i}>{segment}</span>;
+  });
+}
+
 export default function ExpenseChat() {
   const [input, setInput] = useState("");
 
@@ -25,14 +36,14 @@ export default function ExpenseChat() {
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] rounded-xl shadow-sm p-5 flex flex-col h-96">
-      <h2 className="text-lg font-semibold text-[#0F172A] dark:text-[#F8FAFC] mb-3">
+    <div className="bg-surface border border-line rounded-sm p-6 flex flex-col h-96">
+      <h2 className="font-display text-xl font-semibold text-ink mb-4">
         Ask about your spending
       </h2>
 
-      <div className="flex-1 overflow-y-auto space-y-3 mb-3 pr-1">
+      <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-1">
         {messages.length === 0 && (
-          <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
+          <p className="text-sm text-ink-soft italic">
             Try: "How much did I spend on food this month?" or "What's my
             biggest category?"
           </p>
@@ -41,43 +52,43 @@ export default function ExpenseChat() {
         {messages.map((m) => (
           <div
             key={m.id}
-            className={`text-sm rounded-xl px-3 py-2 max-w-[85%] ${
+            className={`text-sm rounded-sm px-3 py-2 max-w-[85%] ${
               m.role === "user"
-                ? "bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 ml-auto"
-                : "bg-[#F1F5F9] dark:bg-[#334155] text-[#0F172A] dark:text-[#F8FAFC]"
+                ? "bg-forest text-white ml-auto"
+                : "bg-paper text-ink border border-line"
             }`}
           >
             {m.parts.map((part, i) =>
-              part.type === "text" ? <span key={i}>{part.text}</span> : null,
+              part.type === "text" ? (
+                <span key={i}>{renderWithBold(part.text)}</span>
+              ) : null,
             )}
           </div>
         ))}
 
         {isLoading && (
-          <div className="text-sm italic text-[#64748B] dark:text-[#94A3B8]">
-            Thinking...
-          </div>
+          <div className="text-sm italic text-ink-soft">Thinking...</div>
         )}
 
         {error && (
-          <div className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-3 py-2">
+          <div className="text-sm bg-surface border-2 border-stamp-red text-stamp-red rounded-sm px-3 py-2">
             Something went wrong: {error.message || "please try again."}
           </div>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-3">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a question about your expenses..."
           disabled={isLoading}
-          className="flex-1 border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-[#F8FAFC] rounded-xl px-3 py-2 text-sm"
+          className="flex-1 border-0 border-b-2 border-line bg-transparent px-1 py-2 text-sm text-ink focus:outline-none focus:border-forest transition"
         />
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="bg-blue-600 text-white rounded-xl px-4 py-2 text-sm disabled:opacity-50"
+          className="bg-forest hover:bg-forest-dark text-white rounded-sm px-5 py-2 text-xs font-semibold uppercase tracking-widest disabled:opacity-50 transition"
         >
           Send
         </button>

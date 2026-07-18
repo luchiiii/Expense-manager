@@ -6,6 +6,7 @@ import ExpenseChat from "./components/ExpenseChat";
 import {
   getExpenses,
   createExpense,
+  updateExpense,
   deleteExpense,
   getSummary,
 } from "./api/expenses";
@@ -14,6 +15,7 @@ function App() {
   const [expenses, setExpenses] = useState([]);
   const [summary, setSummary] = useState({ total: 0, breakdown: [] });
   const [error, setError] = useState("");
+  const [editingExpense, setEditingExpense] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +26,8 @@ function App() {
         ]);
         setExpenses(expensesData);
         setSummary(summaryData);
-      } catch {
+      } catch (err) {
+         console.error("Failed to load expenses/summary:", err);
         setError("Failed to load expenses. Make sure the server is running.");
       }
     };
@@ -32,74 +35,88 @@ function App() {
     fetchData();
   }, []);
 
+  const refetch = async () => {
+    const [expensesData, summaryData] = await Promise.all([
+      getExpenses(),
+      getSummary(),
+    ]);
+    setExpenses(expensesData);
+    setSummary(summaryData);
+  };
+
   const handleAdd = async (form) => {
     try {
-      await createExpense({
-        ...form,
-        amount: Number(form.amount),
-      });
-      const [expensesData, summaryData] = await Promise.all([
-        getExpenses(),
-        getSummary(),
-      ]);
-      setExpenses(expensesData);
-      setSummary(summaryData);
+      await createExpense({ ...form, amount: Number(form.amount) });
+      await refetch();
     } catch {
       setError("Failed to add expense. Please try again.");
+    }
+  };
+
+  const handleUpdate = async (id, form) => {
+    try {
+      await updateExpense(id, { ...form, amount: Number(form.amount) });
+      setEditingExpense(null);
+      await refetch();
+    } catch {
+      setError("Failed to update expense. Please try again.");
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await deleteExpense(id);
-      const [expensesData, summaryData] = await Promise.all([
-        getExpenses(),
-        getSummary(),
-      ]);
-      setExpenses(expensesData);
-      setSummary(summaryData);
+      await refetch();
     } catch {
       setError("Failed to delete expense. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] transition-colors duration-300">
+    <div className="min-h-screen bg-paper">
       {/* Header */}
-      <header className="bg-white dark:bg-[#1E293B] border-b border-[#E2E8F0] dark:border-[#334155] px-6 py-4 flex justify-between items-center shadow-sm">
-        <h1 className="text-2xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">
+      <header className="px-6 pt-10 pb-6 max-w-5xl mx-auto">
+        <h1 className="font-display text-3xl font-semibold text-ink">
           Expense Manager
         </h1>
+        <div className="mt-3 border-t-2 border-ink" />
+        <div className="mt-0.5 border-t border-line" />
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        {/* Error */}
+      <main className="max-w-5xl mx-auto px-6 pb-8">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-6">
+          <div className="bg-surface border-2 border-stamp-red text-stamp-red text-sm rounded-sm px-4 py-3 mb-6">
             {error}
           </div>
         )}
 
-        {/* Summary */}
         <Summary total={summary.total} breakdown={summary.breakdown} />
 
-        {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-6">
           <div className="md:col-span-2">
-            <ExpenseForm onAdd={handleAdd} />
+            <ExpenseForm
+              key={editingExpense ? editingExpense.id : "new"}
+              onAdd={handleAdd}
+              onUpdate={handleUpdate}
+              editingExpense={editingExpense}
+              onCancelEdit={() => setEditingExpense(null)}
+            />
           </div>
           <div className="md:col-span-3">
-            <ExpenseList expenses={expenses} onDelete={handleDelete} />
+            <ExpenseList
+              expenses={expenses}
+              onDelete={handleDelete}
+              onEdit={setEditingExpense}
+            />
           </div>
         </div>
 
-        {/* AI Chat */}
         <div className="mt-6">
           <ExpenseChat />
         </div>
       </main>
 
-      <footer className="text-center text-sm text-[#64748B] dark:text-[#94A3B8] py-6">
+      <footer className="text-center text-xs text-ink-soft py-8">
         © 2026 Expense Manager. All rights reserved.
       </footer>
     </div>

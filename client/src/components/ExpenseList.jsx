@@ -1,21 +1,29 @@
 import ExpenseItem from "./ExpenseItem";
 
-function ExpenseList({ expenses, onDelete }) {
+function ExpenseList({ expenses, onDelete, onEdit }) {
   if (expenses.length === 0) {
     return (
-       <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#334155] p-6 text-center">
-        <p className="text-[#64748B] dark:text-[#94A3B8] text-sm">
-          No expenses yet. Add one above!
+      <div className="bg-surface rounded-sm border border-line p-6 text-center">
+        <p className="text-ink-soft text-sm">
+          No expenses yet. Add one to get started.
         </p>
       </div>
     );
   }
+
   return (
-    <div className="bg-white dark:bg-[#1E293B] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#334155] p-6">
-      <h2 className="text-xl font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-4">Expenses</h2>
-      <div className="space-y-3">
+    <div className="bg-surface rounded-sm border border-line p-6">
+      <h2 className="font-display text-xl font-semibold text-ink mb-2">
+        Expenses
+      </h2>
+      <div>
         {expenses.map((expense) => (
-          <ExpenseItem key={expense.id} expense={expense} onDelete={onDelete} />
+          <ExpenseItem
+            key={expense.id}
+            expense={expense}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
         ))}
       </div>
     </div>

@@ -1,9 +1,9 @@
 const CATEGORY_COLORS = {
-  Food: { bg: "#DCFCE7", text: "#16A34A" },
-  Shopping: { bg: "#F3E8FF", text: "#9333EA" },
-  Transport: { bg: "#DBEAFE", text: "#2563EB" },
-  Bills: { bg: "#FFEDD5", text: "#EA580C" },
-  Other: { bg: "#E5E7EB", text: "#4B5563" },
+  Food: "#2F6B3A",
+  Shopping: "#8B3A2B",
+  Transport: "#2A5C73",
+  Bills: "#8A6A21",
+  Other: "#5B5750",
 };
 
 const formatAmount = (amount) =>
@@ -13,38 +13,44 @@ const formatAmount = (amount) =>
     minimumFractionDigits: 0,
   }).format(amount);
 
-function ExpenseItem({ expense, onDelete }) {
-  const colors = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS.Other;
+function ExpenseItem({ expense, onDelete, onEdit }) {
+  const color = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS.Other;
 
   return (
-    <div className="flex items-center justify-between p-4 border border-[#E2E8F0] dark:border-[#334155] rounded-xl hover:bg-[#F8FAFC] dark:hover:bg-[#0F172A] transition">
+    <div className="flex items-center justify-between py-4 border-b border-line last:border-b-0">
       <div className="flex items-center gap-4">
         <span
-          style={{ backgroundColor: colors.bg, color: colors.text }}
-          className="text-xs font-semibold px-3 py-1 rounded-full"
+          style={{ borderColor: color, color: color }}
+          className="text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-sm border-2 bg-surface shrink-0"
         >
           {expense.category}
         </span>
         <div>
-          <p className="text-sm font-bold text-[#0F172A] dark:text-[#F8FAFC]">
+          <p className="font-mono text-sm font-semibold text-ink">
             {formatAmount(expense.amount)}
           </p>
           {expense.description && (
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+            <p className="text-xs text-ink-soft italic">
               {expense.description}
             </p>
           )}
-          <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
-            {expense.date}
-          </p>
+          <p className="font-mono text-xs text-ink-soft">{expense.date}</p>
         </div>
       </div>
-      <button
-        onClick={() => onDelete(expense.id)}
-        className="text-[#EF4444] hover:text-red-700 text-sm font-medium transition"
-      >
-        Delete
-      </button>
+      <div className="flex items-center gap-4 shrink-0">
+        <button
+          onClick={() => onEdit(expense)}
+          className="text-ink-soft hover:text-forest text-xs font-semibold uppercase tracking-wide transition"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => onDelete(expense.id)}
+          className="text-stamp-red hover:text-[#8a2c22] text-xs font-semibold uppercase tracking-wide transition"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }
