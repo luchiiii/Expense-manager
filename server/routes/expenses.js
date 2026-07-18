@@ -66,7 +66,7 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ error: "Expense not found" });
     }
 
-    const expense = exisiting.rows[0];
+    const expense = existing.rows[0];
     const { amount, category, date, description } = req.body;
 
     if (amount !== undefined && amount <= 0) {

@@ -12,14 +12,17 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "https://expense-manager-three-tau.vercel.app",
+    origin: [
+      "http://localhost:5173",
+      "https://expense-manager-three-tau.vercel.app",
+    ],
   }),
 );
 app.use(express.json());
 
 app.use("/api/expenses", expenseRoutes);
-app.use("/api/chat", chatRoutes);  
+app.use("/api/chat", chatRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
